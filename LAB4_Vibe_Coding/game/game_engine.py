@@ -2,12 +2,15 @@ import random
 import pygame
 from game.text_box import TextBox
 
+
 class GameEngine:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.secret_number = random.randint(1, 100)
         self.attempts = 0
+        self.min_guess = 1
+        self.max_guess = 100
         self.feedback_msg = "Enter a number between 1 and 100"
         self.feedback_color = (220, 220, 220)
         self.game_won = False
@@ -29,14 +32,16 @@ class GameEngine:
             return
 
         guess = int(self.input_box.text)
-        
+
         self.attempts += 1
         self.input_box.clear()
 
         if guess < self.secret_number:
+            self.min_guess = max(self.min_guess, guess + 1)
             self.feedback_msg = f"TOO LOW! (Guess was {guess})"
             self.feedback_color = (80, 160, 240)
         elif guess > self.secret_number:
+            self.max_guess = min(self.max_guess, guess - 1)
             self.feedback_msg = f"TOO HIGH! (Guess was {guess})"
             self.feedback_color = (240, 100, 80)
         else:
@@ -47,6 +52,8 @@ class GameEngine:
     def reset(self):
         self.secret_number = random.randint(1, 100)
         self.attempts = 0
+        self.min_guess = 1
+        self.max_guess = 100
         self.feedback_msg = "Enter a number between 1 and 100"
         self.feedback_color = (220, 220, 220)
         self.game_won = False
@@ -76,6 +83,14 @@ class GameEngine:
 
         attempts_surf = self.font_medium.render(f"Attempts: {self.attempts}", True, (180, 185, 195))
         screen.blit(attempts_surf, (self.width // 2 - attempts_surf.get_width() // 2, 95))
+
+        range_surf = self.font_medium.render(
+            f"Possible range: {self.min_guess} - {self.max_guess}",
+            True,
+            (180, 210, 190),
+        )
+        screen.blit(range_surf, (self.width // 2 - range_surf.get_width() // 2, 118))
+
         self.input_box.render(screen)
 
         pygame.draw.rect(screen, (50, 150, 80), self.submit_btn, border_radius=6)
