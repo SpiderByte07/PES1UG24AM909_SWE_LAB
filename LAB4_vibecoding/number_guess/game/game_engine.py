@@ -17,8 +17,9 @@ class GameEngine:
         self.game_won = False
         self.game_over = False
 
-        self.input_box = TextBox(width // 2 - 110, 150, 120, 48)
-        self.submit_btn = pygame.Rect(width // 2 + 25, 150, 100, 48)
+        # Keep the controls in the left column so the history panel has its own space.
+        self.input_box = TextBox(int(width * 0.08), 150, 120, 48)
+        self.submit_btn = pygame.Rect(int(width * 0.30), 150, 100, 48)
 
         self.font_title = pygame.font.SysFont(None, 42)
         self.font_medium = pygame.font.SysFont(None, 28)
@@ -101,18 +102,24 @@ class GameEngine:
     def render(self, screen):
         screen.fill((30, 34, 42))
 
+        left_center = int(self.width * 0.31)
+        history_left = int(self.width * 0.63)
+        panel = pygame.Rect(history_left, 88, self.width - history_left - 18, self.height - 108)
+        pygame.draw.rect(screen, (39, 44, 54), panel, border_radius=10)
+        pygame.draw.rect(screen, (65, 72, 84), panel, width=1, border_radius=10)
+
         title_surf = self.font_title.render("Number Guessing Arena", True, (245, 245, 245))
         screen.blit(title_surf, (self.width // 2 - title_surf.get_width() // 2, 35))
 
         attempts_surf = self.font_medium.render(
             f"Attempts: {self.attempts}/{self.max_attempts}", True, (180, 185, 195)
         )
-        screen.blit(attempts_surf, (self.width // 2 - attempts_surf.get_width() // 2, 95))
+        screen.blit(attempts_surf, (left_center - attempts_surf.get_width() // 2, 95))
 
         range_surf = self.font_medium.render(
             f"Possible range: {self.min_guess} - {self.max_guess}", True, (180, 185, 195)
         )
-        screen.blit(range_surf, (self.width // 2 - range_surf.get_width() // 2, 120))
+        screen.blit(range_surf, (left_center - range_surf.get_width() // 2, 120))
         self.input_box.render(screen)
 
         pygame.draw.rect(screen, (50, 150, 80), self.submit_btn, border_radius=6)
@@ -124,14 +131,14 @@ class GameEngine:
         )
 
         history_title = self.font_medium.render("Recent guesses", True, (220, 220, 220))
-        screen.blit(history_title, (390, 145))
+        screen.blit(history_title, (history_left + 12, 103))
         for index, (guess, result, color) in enumerate(reversed(self.guess_history)):
             history_surf = self.font_btn.render(f"{guess}: {result}", True, color)
-            screen.blit(history_surf, (390, 180 + index * 30))
+            screen.blit(history_surf, (history_left + 12, 143 + index * 34))
 
         feedback_surf = self.font_medium.render(self.feedback_msg, True, self.feedback_color)
-        screen.blit(feedback_surf, (self.width // 2 - feedback_surf.get_width() // 2, 235))
+        screen.blit(feedback_surf, (left_center - feedback_surf.get_width() // 2, 225))
 
         if self.game_won or self.game_over:
             restart_surf = self.font_medium.render("Press [R] to Start a New Game", True, (255, 220, 80))
-            screen.blit(restart_surf, (self.width // 2 - restart_surf.get_width() // 2, 295))
+            screen.blit(restart_surf, (left_center - restart_surf.get_width() // 2, 285))
