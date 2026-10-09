@@ -10,6 +10,7 @@ class GameEngine:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.game_center_x = (width - 245) // 2
         self.secret_number = random.randint(1, 100)
         self.attempts = 0
         self.min_guess = 1
@@ -20,8 +21,8 @@ class GameEngine:
         self.game_won = False
         self.game_over = False
 
-        self.input_box = TextBox(width // 2 - 110, 150, 120, 48)
-        self.submit_btn = pygame.Rect(width // 2 + 25, 150, 100, 48)
+        self.input_box = TextBox(self.game_center_x - 110, 150, 120, 48)
+        self.submit_btn = pygame.Rect(self.game_center_x + 25, 150, 100, 48)
 
         self.font_title = pygame.font.SysFont(None, 42)
         self.font_medium = pygame.font.SysFont(None, 28)
@@ -94,21 +95,21 @@ class GameEngine:
         screen.fill((30, 34, 42))
 
         title_surf = self.font_title.render("Number Guessing Arena", True, (245, 245, 245))
-        screen.blit(title_surf, (self.width // 2 - title_surf.get_width() // 2, 35))
+        screen.blit(title_surf, (self.game_center_x - title_surf.get_width() // 2, 35))
 
         attempts_surf = self.font_medium.render(
             f"Attempts: {self.attempts}/{MAX_ATTEMPTS}",
             True,
             (180, 185, 195),
         )
-        screen.blit(attempts_surf, (self.width // 2 - attempts_surf.get_width() // 2, 95))
+        screen.blit(attempts_surf, (self.game_center_x - attempts_surf.get_width() // 2, 95))
 
         range_surf = self.font_medium.render(
             f"Possible range: {self.min_guess} - {self.max_guess}",
             True,
             (180, 210, 190),
         )
-        screen.blit(range_surf, (self.width // 2 - range_surf.get_width() // 2, 118))
+        screen.blit(range_surf, (self.game_center_x - range_surf.get_width() // 2, 118))
 
         self.input_box.render(screen)
 
@@ -121,13 +122,13 @@ class GameEngine:
         )
 
         feedback_surf = self.font_medium.render(self.feedback_msg, True, self.feedback_color)
-        screen.blit(feedback_surf, (self.width // 2 - feedback_surf.get_width() // 2, 235))
+        screen.blit(feedback_surf, (self.game_center_x - feedback_surf.get_width() // 2, 235))
 
         self.render_guess_history(screen)
 
         if self.game_won:
             restart_surf = self.font_medium.render("Press [R] to Start a New Game", True, (255, 220, 80))
-            screen.blit(restart_surf, (self.width // 2 - restart_surf.get_width() // 2, 295))
+            screen.blit(restart_surf, (self.game_center_x - restart_surf.get_width() // 2, 295))
 
         if self.game_over:
             overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
@@ -156,7 +157,7 @@ class GameEngine:
             )
 
     def render_guess_history(self, screen):
-        panel = pygame.Rect(self.width - 165, 80, 155, 270)
+        panel = pygame.Rect(self.width - 235, 80, 225, 350)
         pygame.draw.rect(screen, (39, 44, 54), panel, border_radius=8)
         pygame.draw.rect(screen, (100, 110, 125), panel, width=1, border_radius=8)
 
