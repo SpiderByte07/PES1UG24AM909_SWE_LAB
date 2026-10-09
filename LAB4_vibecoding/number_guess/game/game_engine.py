@@ -10,6 +10,7 @@ class GameEngine:
         self.attempts = 0
         self.min_guess = 1
         self.max_guess = 100
+        self.guess_history = []
         self.feedback_msg = "Enter a number between 1 and 100"
         self.feedback_color = (220, 220, 220)
         self.game_won = False
@@ -43,22 +44,30 @@ class GameEngine:
 
         if guess < self.secret_number:
             self.min_guess = guess + 1
+            self._add_history(guess, "TOO LOW", (80, 160, 240))
             self.feedback_msg = f"TOO LOW! (Guess was {guess})"
             self.feedback_color = (80, 160, 240)
         elif guess > self.secret_number:
             self.max_guess = guess - 1
+            self._add_history(guess, "TOO HIGH", (240, 100, 80))
             self.feedback_msg = f"TOO HIGH! (Guess was {guess})"
             self.feedback_color = (240, 100, 80)
         else:
+            self._add_history(guess, "CORRECT", (80, 220, 90))
             self.feedback_msg = f"CORRECT! Found in {self.attempts} attempts."
             self.feedback_color = (80, 220, 90)
             self.game_won = True
+
+    def _add_history(self, guess, result, color):
+        self.guess_history.append((guess, result, color))
+        self.guess_history = self.guess_history[-5:]
 
     def reset(self):
         self.secret_number = random.randint(1, 100)
         self.attempts = 0
         self.min_guess = 1
         self.max_guess = 100
+        self.guess_history.clear()
         self.feedback_msg = "Enter a number between 1 and 100"
         self.feedback_color = (220, 220, 220)
         self.game_won = False
@@ -102,6 +111,12 @@ class GameEngine:
             btn_text,
             (self.submit_btn.centerx - btn_text.get_width() // 2, self.submit_btn.centery - btn_text.get_height() // 2),
         )
+
+        history_title = self.font_medium.render("Recent guesses", True, (220, 220, 220))
+        screen.blit(history_title, (390, 145))
+        for index, (guess, result, color) in enumerate(reversed(self.guess_history)):
+            history_surf = self.font_btn.render(f"{guess}: {result}", True, color)
+            screen.blit(history_surf, (390, 180 + index * 30))
 
         feedback_surf = self.font_medium.render(self.feedback_msg, True, self.feedback_color)
         screen.blit(feedback_surf, (self.width // 2 - feedback_surf.get_width() // 2, 235))
