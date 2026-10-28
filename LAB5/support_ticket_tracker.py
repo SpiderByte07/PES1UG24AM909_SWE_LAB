@@ -21,9 +21,8 @@ def assign_ticket(ticket_id, agent, notify=False):
     try:
         TICKETS[ticket_id]["assignee"] = agent
         return True
-    except:
-        pass
-    return False
+    except KeyError:
+        return False
 
 
 def update_status(ticket_id, status):
@@ -88,8 +87,6 @@ def main():
     if ticket_id:
         closeTicket(ticket_id)
     save_tickets()
-    if os.environ.get("RUN_UNSAFE_DEMO") == "1":
-        eval("print('unsafe demo')")
 
 
 if __name__ == "__main__":
