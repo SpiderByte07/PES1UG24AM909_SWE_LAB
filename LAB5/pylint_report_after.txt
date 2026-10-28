@@ -1,0 +1,6 @@
+************* Module support_ticket_tracker
+support_ticket_tracker.py:13:0: R0913: Too many arguments (6/5) (too-many-arguments)
+
+------------------------------------------------------------------
+Your code has been rated at 9.85/10 (previous run: 5.00/10, +4.85)
+
